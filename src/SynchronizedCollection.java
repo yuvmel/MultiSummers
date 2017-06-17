@@ -1,3 +1,4 @@
+
 import java.util.LinkedList;
 import java.util.List;
 
@@ -5,26 +6,44 @@ import java.util.List;
  * Created by Yuval M.
  */
 public class SynchronizedCollection {
-    private LinkedList<Integer> collection;
+
+    private final LinkedList<Integer> collection;
+    private int pendingAddCount = 0;
 
     public SynchronizedCollection() {
         collection = new LinkedList<>();
     }
 
     public SynchronizedCollection(List list) {
-        collection = new LinkedList<Integer>(list);
+        collection = new LinkedList<>(list);
     }
 
-    synchronized int getInt() {
+    public synchronized int getInt() {
         return collection.remove();
     }
 
-    synchronized void addInt(int i) {
+    public synchronized void addInt(int i) {
         collection.add(i);
     }
 
+    public synchronized int getCount() {
+        return collection.size();
+    }
+
+    public synchronized int getPendingAddCount() {
+        return pendingAddCount;
+    }
+
+    public synchronized void incPendingAddCount() {
+        pendingAddCount++;
+    }
+
+    public synchronized void decPendingAddCount() {
+        pendingAddCount--;
+    }
+
     @Override
-    public String toString() {
+    public synchronized String toString() {
         return collection.toString();
     }
 }
