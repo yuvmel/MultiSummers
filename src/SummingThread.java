@@ -1,3 +1,6 @@
+/*
+ * Maman 15 course 20554 question 1 by Yuval Melamed, ID 035870864
+ */
 
 import java.util.NoSuchElementException;
 
@@ -22,24 +25,26 @@ public class SummingThread implements Runnable {
     public void run() {
         int i, j;
 
-        while (synchronizedCollection.getCount() > 1
-                || synchronizedCollection.getPendingAddCount() > 0) {
-            try {
-                synchronizedCollection.incPendingAddCount();
-                i = synchronizedCollection.getInt();
-            } catch (NoSuchElementException e) {
-                synchronizedCollection.decPendingAddCount();
-                continue;
+        while (synchronizedCollection.getPendingAddCount() > 0
+                || synchronizedCollection.getCount() > 1) {
+            while (synchronizedCollection.getCount() > 1) {
+                try {
+                    synchronizedCollection.incPendingAddCount();
+                    i = synchronizedCollection.getInt();
+                } catch (NoSuchElementException e) {
+                    synchronizedCollection.decPendingAddCount();
+                    continue;
+                }
+                try {
+                    j = synchronizedCollection.getInt();
+                } catch (NoSuchElementException e) {
+                    synchronizedCollection.addInt(i);
+                    continue;
+                } finally {
+                    synchronizedCollection.decPendingAddCount();
+                }
+                synchronizedCollection.addInt(i + j);
             }
-            try {
-                j = synchronizedCollection.getInt();
-            } catch (NoSuchElementException e) {
-                synchronizedCollection.addInt(i);
-                synchronizedCollection.decPendingAddCount();
-                continue;
-            }
-            synchronizedCollection.addInt(i + j);
-            synchronizedCollection.decPendingAddCount();
         }
     }
 }

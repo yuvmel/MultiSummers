@@ -1,6 +1,8 @@
+/*
+ * Maman 15 course 20554 question 1 by Yuval Melamed, ID 035870864
+ */
 
 import java.util.LinkedList;
-import java.util.List;
 
 /**
  * Created by Yuval M.
@@ -10,12 +12,11 @@ public class SynchronizedCollection {
     private final LinkedList<Integer> collection;
     private int pendingAddCount = 0;
 
-    public SynchronizedCollection() {
+    public SynchronizedCollection(int[] array) {
         collection = new LinkedList<>();
-    }
-
-    public SynchronizedCollection(List list) {
-        collection = new LinkedList<>(list);
+        for (int i : array) {
+            collection.add(i);
+        }
     }
 
     public synchronized int getInt() {
@@ -40,10 +41,5 @@ public class SynchronizedCollection {
 
     public synchronized void decPendingAddCount() {
         pendingAddCount--;
-    }
-
-    @Override
-    public synchronized String toString() {
-        return collection.toString();
     }
 }
