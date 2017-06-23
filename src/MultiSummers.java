@@ -70,19 +70,28 @@ public class MultiSummers {
                 + " threads to sum the integers...");
         ExecutorService executorService = Executors.newFixedThreadPool(m);
         for (int i = 0; i < m; i++) {
-            executorService.execute(new SummingThread(synchronizedCollection));
+            try {
+                executorService.execute(new SummingThread(synchronizedCollection));
+            } catch (OutOfMemoryError e) {
+                System.out.println("Thread count too large - your machine ran out of memory.");
+            }
         }
         executorService.shutdown();
 
+        // Waiting for threads
         System.out.println("Waiting for all the threads to finish...");
         while (true) {
             try {
-                if (executorService.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS)) {
+                if (executorService.awaitTermination(10, TimeUnit.SECONDS)) {
                     break;
                 }
             } catch (InterruptedException e) {
+                continue;
             }
+            System.out.println("Still working..." + 100 * synchronizedCollection.getCount() / n + "% to go!");
         }
+
+        // Showing final result
         int mt_sum = synchronizedCollection.getInt();
         System.out.print("Multi-thread sum = "
                 + NumberFormat.getIntegerInstance().format(mt_sum));
