@@ -92,10 +92,10 @@ public class MultiSummers {
         }
 
         // Showing final result
-        int mt_sum = synchronizedCollection.getInt();
+        int multiThreadedSum = synchronizedCollection.getInt();
         System.out.print("Multi-thread sum = "
-                + NumberFormat.getIntegerInstance().format(mt_sum));
-        if (mt_sum == sum) {
+                + NumberFormat.getIntegerInstance().format(multiThreadedSum));
+        if (multiThreadedSum == sum) {
             System.out.println(" (as expected)");
         } else {
             System.out.printf(" (hmm...)");
