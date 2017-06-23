@@ -9,9 +9,13 @@ import java.util.LinkedList;
  */
 public class SynchronizedCollection {
 
+    // Main data structure
     private final LinkedList<Integer> collection;
+
+    // Count of pending "add" operation into collection
     private int pendingAddCount = 0;
 
+    // Copy array into collection - no shortcuts for primitives
     public SynchronizedCollection(int[] array) {
         collection = new LinkedList<>();
         for (int i : array) {

@@ -4,19 +4,15 @@
 
 import java.util.NoSuchElementException;
 
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 /**
- *
  * @author yuval.melamed
  */
 public class SummingThread implements Runnable {
 
+    // The collection with which to work upon
     private final SynchronizedCollection synchronizedCollection;
 
+    // Setup link to collection
     public SummingThread(SynchronizedCollection synchronizedCollection) {
         this.synchronizedCollection = synchronizedCollection;
     }
@@ -25,25 +21,32 @@ public class SummingThread implements Runnable {
     public void run() {
         int i, j;
 
-        while (synchronizedCollection.getPendingAddCount() > 0
-                || synchronizedCollection.getCount() > 1) {
-            while (synchronizedCollection.getCount() > 1) {
+        // Loop while collection is not empty or about to be added to
+        while (synchronizedCollection.getCount() > 1 || synchronizedCollection.getPendingAddCount() > 0) {
+
+            // Only if collection is not currently empty
+            if (synchronizedCollection.getCount() > 1) {
                 try {
+                    // Signal we're going to add 1 back before we take 1 integer
                     synchronizedCollection.incPendingAddCount();
                     i = synchronizedCollection.getInt();
                 } catch (NoSuchElementException e) {
+                    // We won't be adding anything if we couldn't get anything
                     synchronizedCollection.decPendingAddCount();
                     continue;
                 }
                 try {
+                    // Try getting the 2nd integer
                     j = synchronizedCollection.getInt();
                 } catch (NoSuchElementException e) {
+                    // Add the 1st integer back if we failed reading the 2nd
                     synchronizedCollection.addInt(i);
-                    continue;
-                } finally {
                     synchronizedCollection.decPendingAddCount();
+                    continue;
                 }
+                // Add back just the sum of the 2 integers
                 synchronizedCollection.addInt(i + j);
+                synchronizedCollection.decPendingAddCount();
             }
         }
     }
